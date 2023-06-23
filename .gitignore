@@ -1,4 +1,6 @@
 /dist
+/build-test/
+
 
 # Logs
 logs
@@ -61,3 +63,11 @@ typings/
 
 # environment variables
 .env
+
+
+# fixture contract compilation files
+test/fixture-projects/*/artifacts
+test/fixture-projects/*/cache
+
+# linearization related files
+test/fixture-projects/*/linearization
