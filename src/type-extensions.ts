@@ -4,7 +4,7 @@
 import "hardhat/types/config";
 import "hardhat/types/runtime";
 
-import { ExampleHardhatRuntimeEnvironmentField } from "./ExampleHardhatRuntimeEnvironmentField";
+// import { ExampleHardhatRuntimeEnvironmentField } from "./ExampleHardhatRuntimeEnvironmentField";
 
 declare module "hardhat/types/config" {
   // This is an example of an extension to one of the Hardhat config values.
@@ -28,7 +28,7 @@ declare module "hardhat/types/config" {
 declare module "hardhat/types/runtime" {
   // This is an example of an extension to the Hardhat Runtime Environment.
   // This new field will be available in tasks' actions, scripts, and tests.
-  export interface HardhatRuntimeEnvironment {
-    example: ExampleHardhatRuntimeEnvironmentField;
-  }
+  // export interface HardhatRuntimeEnvironment {
+  //   example: ExampleHardhatRuntimeEnvironmentField;
+  // }
 }
