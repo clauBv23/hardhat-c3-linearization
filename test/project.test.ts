@@ -1,7 +1,7 @@
 // tslint:disable-next-line no-implicit-dependencies
 import { assert } from "chai";
-import path from "path";
 import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
+import path from "path";
 
 import { useEnvironment } from "./helpers";
 

@@ -3,13 +3,13 @@ const defaultOptions = {
 };
 
 export function linearize(graph: any, options: { reverse: boolean }) {
-  options = Object.assign({}, defaultOptions, options);
+  options = { ...defaultOptions, ...options };
 
   const results = {};
   const visiting = new Set();
   const heads = Object.keys(graph);
 
-  for (let head of heads) {
+  for (const head of heads) {
     _linearize(graph, head, results, visiting, options);
   }
 
@@ -17,14 +17,14 @@ export function linearize(graph: any, options: { reverse: boolean }) {
 }
 
 function _merge(sequences: any[]) {
-  let result = [];
+  const result = [];
   sequences = sequences.map((s) => s.slice());
 
   while (sequences.length > 0) {
     let found = false;
     let head: any;
 
-    for (let seq of sequences) {
+    for (const seq of sequences) {
       head = seq[0];
 
       function isBadHead(s: string | any[]) {
@@ -35,10 +35,10 @@ function _merge(sequences: any[]) {
         found = true;
         result.push(head);
 
-        for (let seq of sequences) {
-          const index = seq.indexOf(head);
+        for (const seq1 of sequences) {
+          const index = seq1.indexOf(head);
           if (index > -1) {
-            seq.splice(index, 1);
+            seq1.splice(index, 1);
           }
         }
 
@@ -83,15 +83,15 @@ function _linearize(
     parents = parents.slice().reverse();
   }
 
-  let sequences = parents.map((x: any) =>
+  const sequences = parents.map((x: any) =>
     _linearize(graph, x, results, visiting, options)
   );
   sequences.push(parents);
 
-  const res = [head].concat(_merge(sequences));
-  results[head] = res;
+  const res1 = [head].concat(_merge(sequences));
+  results[head] = res1;
 
   visiting.delete(head);
 
-  return res;
+  return res1;
 }
