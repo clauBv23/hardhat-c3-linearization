@@ -1,5 +1,7 @@
-export function linearize(graph: { [key: string]: string[] }) {
-  const linearizations: { [x: string]: string[] } = {};
+import type { ContractInheritances } from "./types";
+
+export function linearize(graph: ContractInheritances) {
+  const linearizations: { [x: string]: any[] } = {};
   const visiting: Set<string> = new Set();
   const heads: string[] = Object.keys(graph);
 

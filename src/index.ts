@@ -6,25 +6,15 @@ import {
   TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
 } from "hardhat/builtin-tasks/task-names";
 import { task } from "hardhat/config";
-import type { CompilationJob, CompilerInput } from "hardhat/types";
+import type { CompilerInput } from "hardhat/types";
+
+import type { ContractInheritances, CompileJobArgs } from "./types";
 
 import { linearize } from "./linearize";
-import "./type-extensions";
+import "./types";
 
 // This import is needed to let the TypeScript compiler know that it should include your type
 // extensions in your npm package's types file.
-
-interface CompileJobArgs {
-  compilationJob: CompilationJob;
-  compilationJobs: CompilationJob[];
-  compilationJobIndex: number;
-  quiet: boolean;
-  emitsArtifacts: boolean;
-}
-
-interface ContractInheritances {
-  [key: string]: string[];
-}
 
 task<CompileJobArgs>(
   TASK_COMPILE_SOLIDITY_COMPILE_JOB,
