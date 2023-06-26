@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-contract A {
+import "./A.sol";
+import "./B.sol";
+
+contract C is A, B {
 
  
 }
