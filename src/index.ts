@@ -77,11 +77,9 @@ function writeInFile(linearization: ContractInheritances) {
   // todo make file path configurable
   fsExtra.outputFile("linearization/linearization.json", fileContent, (err) => {
     if (err) {
-      // todo review how to manage the errors with hardhat
-      console.log(err);
+      throw new Error(`Error writing on file: ${err}`);
     } else {
-      // todo
-      console.log("File written successfully\n");
+      console.log("Linearization written successfully\n");
     }
   });
 }
