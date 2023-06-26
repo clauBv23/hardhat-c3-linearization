@@ -35,11 +35,11 @@ function _merge(sequences: string[][]): any[] {
         found = true;
         mergeResult.push(headCandidate);
 
-        for (const seq1 of sequences) {
+        for (const s of sequences) {
           // remove the new head from all the sequences
-          const index = seq1.indexOf(headCandidate);
+          const index = s.indexOf(headCandidate);
           if (index > -1) {
-            seq1.splice(index, 1);
+            s.splice(index, 1);
           }
         }
         break;
