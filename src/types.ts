@@ -11,3 +11,8 @@ export interface CompileJobArgs {
 export interface ContractInheritances {
   [key: string]: string[];
 }
+
+export interface ContractData {
+  name: string;
+  inheritances: string[];
+}

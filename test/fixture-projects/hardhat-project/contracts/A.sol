@@ -5,3 +5,8 @@ contract A {
 
  
 }
+
+
+contract K{
+  
+}

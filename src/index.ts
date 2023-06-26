@@ -8,7 +8,11 @@ import {
 import { task } from "hardhat/config";
 import type { CompilerInput } from "hardhat/types";
 
-import type { ContractInheritances, CompileJobArgs } from "./types";
+import type {
+  ContractInheritances,
+  CompileJobArgs,
+  ContractData,
+} from "./types";
 
 import { linearize } from "./linearize";
 import "./types";
@@ -28,13 +32,13 @@ task<CompileJobArgs>(
 
     const ctrInheritances: ContractInheritances = {};
     for (const file of Object.entries(input.sources)) {
-      let contractName: string;
-      let contractInheritances: string[] = [];
+      const contracts: ContractData[] = parsing(file[1].content);
 
-      [contractName, contractInheritances] = parsing(file[1].content);
-
-      ctrInheritances[contractName] = contractInheritances;
+      for (const c of contracts) {
+        ctrInheritances[c.name] = c.inheritances;
+      }
     }
+
     const result = linearize(ctrInheritances);
     writeInFile(result);
 
@@ -42,27 +46,29 @@ task<CompileJobArgs>(
   }
 );
 
-function parsing(contract: string): [string, string[]] {
+function parsing(contract: string): ContractData[] {
   const ast = parser.parse(contract);
-  let contractDefinition: ContractDefinition;
-  // todo the current approach will return a single contract definition per file
-  // todo if there are more than one contract definition in a file only one will be considered
-  // todo change this to use filter and parse them all instead of just one.
-  contractDefinition = ast.children.find(
-    (e: { type: string }) => e.type === "ContractDefinition"
-  ) as ContractDefinition;
+  let contractDefinitions: ContractDefinition[] = [];
 
-  if (!contractDefinition) {
-    return ["", [""]];
+  contractDefinitions = ast.children.filter(
+    (e: { type: string }) => e.type === "ContractDefinition"
+  ) as ContractDefinition[];
+
+  if (contractDefinitions.length === 0) {
+    return [{ name: "", inheritances: [""] }];
   }
 
-  const inheritances: string[] = contractDefinition.baseContracts.map(
-    (e: any) => {
-      return e.baseName.namePath;
-    }
-  );
+  const contracts: ContractData[] = [];
 
-  return [contractDefinition.name, inheritances];
+  for (const cd of contractDefinitions) {
+    contracts.push({
+      name: cd.name,
+      inheritances: cd.baseContracts.map((e: any) => {
+        return e.baseName.namePath;
+      }),
+    });
+  }
+  return contracts;
 }
 
 function writeInFile(linearization: ContractInheritances) {
