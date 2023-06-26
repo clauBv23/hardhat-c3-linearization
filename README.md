@@ -2,11 +2,11 @@
 
 Plugin to get the S3 linearization output from your project.
 
-[Hardhat](https://hardhat.org) plugin example.
+<!-- [Hardhat](https://hardhat.org) plugin example.
 
 ## What
 
-<!-- <_A longer, one paragraph, description of the plugin_>
+<_A longer, one paragraph, description of the plugin_>
 
 This plugin will help you with world domination by implementing a simple tic-tac-toe in the terminal.
 
