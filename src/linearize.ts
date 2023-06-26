@@ -10,9 +10,7 @@ export function linearize(graph: { [key: string]: string[] }) {
   return linearizations;
 }
 
-function _merge(
-  sequences: Array<Array<string>>
-): Array<string> | Array<string | Array<string>> {
+function _merge(sequences: Array<Array<string>>): Array<any> {
   const mergeResult: Array<string> = [];
 
   // to avoid modifying the input
@@ -50,7 +48,7 @@ function _merge(
     sequences = sequences.filter((s) => s.length > 0);
 
     if (!found) {
-      return ["Impossible graph inheritance", ...sequences];
+      return ["Linearization of inheritance graph impossible", ...sequences];
     }
   }
 
@@ -69,7 +67,6 @@ function _linearize(
   }
 
   if (visiting.has(node)) {
-    // todo ? CHECK THIS PATH
     return ["Circular dependency found", ...visiting];
   }
 
@@ -95,7 +92,7 @@ function _linearize(
   // it should be the merge of the parents linearizations and the parents lists
   sequences.push(parents);
 
-  var mergeResult: Array<string> = [node].concat(..._merge(sequences));
+  var mergeResult: Array<any> = [node].concat(_merge(sequences));
   linearizations[node] = mergeResult;
 
   visiting.delete(node);
