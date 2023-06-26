@@ -10,8 +10,8 @@ export function linearize(graph: { [key: string]: string[] }) {
   return linearizations;
 }
 
-function _merge(sequences: Array<Array<string>>): Array<any> {
-  const mergeResult: Array<string> = [];
+function _merge(sequences: string[][]): any[] {
+  const mergeResult: string[] = [];
 
   // to avoid modifying the input
   sequences = sequences.map((s) => s.slice());
@@ -72,11 +72,11 @@ function _linearize(
 
   visiting.add(node);
 
-  let parents: Array<string> = graph[node];
+  let parents: string[] = graph[node];
 
   // the linearization of a node with no parents is the array with the node itself
   if (!parents || parents?.length === 0) {
-    const res: Array<string> = [node];
+    const res: string[] = [node];
     linearizations[node] = res;
     return res;
   }
@@ -85,14 +85,14 @@ function _linearize(
   parents = parents.slice().reverse();
 
   // get the linearization of all node parents
-  const sequences: Array<Array<string>> = parents.map((x: string) =>
+  const sequences: string[][] = parents.map((x: string) =>
     _linearize(graph, x, linearizations, visiting)
   );
 
   // it should be the merge of the parents linearizations and the parents lists
   sequences.push(parents);
 
-  var mergeResult: Array<any> = [node].concat(_merge(sequences));
+  const mergeResult: any[] = [node].concat(_merge(sequences));
   linearizations[node] = mergeResult;
 
   visiting.delete(node);

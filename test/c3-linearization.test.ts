@@ -1,5 +1,6 @@
-const assert = require("assert");
-const { linearize } = require("../src/linearize");
+import { assert } from "chai";
+
+import { linearize } from "../src/linearize";
 
 describe("Unit tests", function () {
   describe("C3-linearization", function () {
