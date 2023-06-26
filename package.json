@@ -1,5 +1,5 @@
 {
-  "name": "hardhat-s3-linearization",
+  "name": "hardhat-c3-linearization",
   "version": "0.0.1",
   "description": "Hardhat TypeScript plugin to get the S3 linearization of your project.",
   "author": "Claudia Barcelo",
@@ -27,7 +27,9 @@
     "README.md"
   ],
   "devDependencies": {
+    "@solidity-parser/parser": "^0.16.0",
     "@types/chai": "^4.2.0",
+    "@types/fs-extra": "^5.0.4",
     "@types/mocha": "^9.1.0",
     "@types/node": "^14.0.0",
     "chai": "^4.2.0",
@@ -44,6 +46,6 @@
     "hardhat": "^2.16.0"
   },
   "dependencies": {
-    "@solidity-parser/parser": "^0.16.0"
+    "user": "^0.0.0"
   }
 }
