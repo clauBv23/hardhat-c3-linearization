@@ -83,7 +83,7 @@ function _linearize(
     return res;
   }
 
-  // solidity s3(right to left) has the opposite of python ordering
+  // solidity c3(right to left) has the opposite of python ordering
   parents = parents.slice().reverse();
 
   // get the linearization of all node parents
