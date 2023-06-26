@@ -69,11 +69,9 @@ describe("Unit tests", function () {
     });
   });
 
-  describe("parse function", function () {
-    // todo
-  });
+  // todo
 
-  describe("write in file", function () {
-    // todo
-  });
+  describe.skip("parse function", function () {});
+
+  describe.skip("write in file", function () {});
 });
