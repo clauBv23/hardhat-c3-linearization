@@ -1,6 +1,6 @@
-# hardhat-example-plugin
+# hardhat-s3-linearization-plugin
 
-Pluggin to get the S3 linearization output from you project.
+Plugin to get the S3 linearization output from your project.
 
 [Hardhat](https://hardhat.org) plugin example.
 
