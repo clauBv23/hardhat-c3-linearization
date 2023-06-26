@@ -1,51 +1,52 @@
-const defaultOptions = {
-  reverse: false,
-};
-
-export function linearize(graph: any, options: { reverse: boolean }) {
-  options = { ...defaultOptions, ...options };
-
-  const results = {};
-  const visiting = new Set();
-  const heads = Object.keys(graph);
+export function linearize(graph: { [key: string]: string[] }) {
+  const linearizations: { [x: string]: string[] } = {};
+  const visiting: Set<string> = new Set();
+  const heads: string[] = Object.keys(graph);
 
   for (const head of heads) {
-    _linearize(graph, head, results, visiting, options);
+    _linearize(graph, head, linearizations, visiting);
   }
 
-  return results;
+  return linearizations;
 }
 
-function _merge(sequences: any[]) {
-  const result = [];
+function _merge(
+  sequences: Array<Array<string>>
+): Array<string> | Array<string | Array<string>> {
+  const mergeResult: Array<string> = [];
+
+  // to avoid modifying the input
   sequences = sequences.map((s) => s.slice());
 
   while (sequences.length > 0) {
-    let found = false;
-    let head: any;
+    let found: boolean = false;
+    let headCandidate: string;
 
     for (const seq of sequences) {
-      head = seq[0];
+      headCandidate = seq[0];
 
-      function isBadHead(s: string | any[]) {
-        return s !== seq && s.slice(1).includes(head);
+      function cantBeHead(s: string[]) {
+        // is a sequence tail
+        return s !== seq && s.slice(1).includes(headCandidate);
       }
 
-      if (!sequences.find(isBadHead)) {
+      if (!sequences.find(cantBeHead)) {
+        // if is not in a sequence tail then is head
         found = true;
-        result.push(head);
+        mergeResult.push(headCandidate);
 
         for (const seq1 of sequences) {
-          const index = seq1.indexOf(head);
+          // remove the new head from all the sequences
+          const index = seq1.indexOf(headCandidate);
           if (index > -1) {
             seq1.splice(index, 1);
           }
         }
-
         break;
       }
     }
 
+    // clean empty sequences
     sequences = sequences.filter((s) => s.length > 0);
 
     if (!found) {
@@ -53,45 +54,51 @@ function _merge(sequences: any[]) {
     }
   }
 
-  return result;
+  return mergeResult;
 }
+
 function _linearize(
-  graph: { [x: string]: any },
-  head: string,
-  results: { [x: string]: any[]; hasOwnProperty?: any },
-  visiting: Set<unknown>,
-  options: { reverse: boolean }
+  graph: { [x: string]: string[] },
+  node: string,
+  linearizations: { [x: string]: string[] },
+  visiting: Set<string>
 ) {
-  if (results.hasOwnProperty(head)) {
-    return results[head];
+  // have to linearize and already linearized node
+  if (linearizations.hasOwnProperty(node)) {
+    return linearizations[node];
   }
 
-  if (visiting.has(head)) {
-    return "circular dependency found";
+  if (visiting.has(node)) {
+    // todo ? CHECK THIS PATH
+    return ["Circular dependency found", ...visiting];
   }
-  visiting.add(head);
 
-  let parents = graph[head];
+  visiting.add(node);
 
-  if (!parents || parents.length === 0) {
-    const res = [head];
-    results[head] = res;
+  let parents: Array<string> = graph[node];
+
+  // the linearization of a node with no parents is the array with the node itself
+  if (!parents || parents?.length === 0) {
+    const res: Array<string> = [node];
+    linearizations[node] = res;
     return res;
   }
 
-  if (options.reverse === true) {
-    parents = parents.slice().reverse();
-  }
+  // solidity s3(right to left) has the opposite of python ordering
+  parents = parents.slice().reverse();
 
-  const sequences = parents.map((x: any) =>
-    _linearize(graph, x, results, visiting, options)
+  // get the linearization of all node parents
+  const sequences: Array<Array<string>> = parents.map((x: string) =>
+    _linearize(graph, x, linearizations, visiting)
   );
+
+  // it should be the merge of the parents linearizations and the parents lists
   sequences.push(parents);
 
-  const res1 = [head].concat(_merge(sequences));
-  results[head] = res1;
+  var mergeResult: Array<string> = [node].concat(..._merge(sequences));
+  linearizations[node] = mergeResult;
 
-  visiting.delete(head);
+  visiting.delete(node);
 
-  return res1;
+  return mergeResult;
 }

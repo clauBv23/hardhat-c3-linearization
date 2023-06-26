@@ -14,8 +14,6 @@ import "./type-extensions";
 // This import is needed to let the TypeScript compiler know that it should include your type
 // extensions in your npm package's types file.
 
-// const parser = require("@solidity-parser/parser");
-
 interface CompileJobArgs {
   compilationJob: CompilationJob;
   compilationJobs: CompilationJob[];
@@ -24,8 +22,8 @@ interface CompileJobArgs {
   emitsArtifacts: boolean;
 }
 
-interface LinearizationOutput {
-  [key: string]: any;
+interface ContractInheritances {
+  [key: string]: string[];
 }
 
 task<CompileJobArgs>(
@@ -38,17 +36,17 @@ task<CompileJobArgs>(
       { compilationJob }
     );
 
-    const linearization: LinearizationOutput = {};
+    const ctrInheritances: ContractInheritances = {};
     for (const file of Object.entries(input.sources)) {
       let contractName: string;
       let contractInheritances: string[] = [];
 
       [contractName, contractInheritances] = parsing(file[1].content);
 
-      linearization[contractName] = contractInheritances;
+      ctrInheritances[contractName] = contractInheritances;
     }
-    const result = linearize(linearization, { reverse: true });
-    await writeInFile(result);
+    const result = linearize(ctrInheritances);
+    writeInFile(result);
 
     return superCall({ ...args, compilationJob });
   }
@@ -68,19 +66,22 @@ function parsing(contract: string): [string, string[]] {
     return ["", [""]];
   }
 
-  const inheritances = contractDefinition.baseContracts.map((e: any) => {
-    return e.baseName.namePath;
-  });
+  const inheritances: string[] = contractDefinition.baseContracts.map(
+    (e: any) => {
+      return e.baseName.namePath;
+    }
+  );
 
   return [contractDefinition.name, inheritances];
 }
 
-function writeInFile(linearization: LinearizationOutput) {
-  const fileContent = JSON.stringify(linearization, null, 2);
+function writeInFile(linearization: ContractInheritances) {
+  const fileContent: string = JSON.stringify(linearization, null, 2);
 
+  // todo make file path configurable
   fsExtra.outputFile("linearization/linearization.json", fileContent, (err) => {
     if (err) {
-      // todo
+      // todo review how to manage the errors with hardhat
       console.log(err);
     } else {
       // todo
