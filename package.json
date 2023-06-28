@@ -10,7 +10,8 @@
     "ethereum",
     "smart-contracts",
     "hardhat",
-    "hardhat-plugin"
+    "hardhat-plugin",
+    "c3-linearization"
   ],
   "scripts": {
     "lint:fix": "prettier --write 'src/**/*.{js,ts}' 'test/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
@@ -44,8 +45,5 @@
   },
   "peerDependencies": {
     "hardhat": "^2.16.0"
-  },
-  "dependencies": {
-    "user": "^0.0.0"
   }
 }
