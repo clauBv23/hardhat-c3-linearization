@@ -8,14 +8,12 @@ import {
 import { task } from "hardhat/config";
 import type { CompilerInput } from "hardhat/types";
 
+import { linearize } from "./linearize";
 import type {
-  ContractInheritances,
   CompileJobArgs,
   ContractData,
+  ContractInheritances,
 } from "./types";
-
-import { linearize } from "./linearize";
-import "./types";
 
 // This import is needed to let the TypeScript compiler know that it should include your type
 // extensions in your npm package's types file.
