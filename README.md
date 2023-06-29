@@ -1,81 +1,63 @@
-# hardhat-c3-linearization-plugin
+# hardhat-c3-linearization
+
+![NPM](https://img.shields.io/npm/l/hardhat-c3-linearization)
 
 Plugin to get the C3 linearization output from your project.
 
-<!-- [Hardhat](https://hardhat.org) plugin example.
-
 ## What
 
-<_A longer, one paragraph, description of the plugin_>
-
-This plugin will help you with world domination by implementing a simple tic-tac-toe in the terminal.
+This plugin will help you better simplify your project's inheritance graph and to solve the linearization issues in an easer way.
 
 ## Installation
 
-<_A step-by-step guide on how to install the plugin_>
-
 ```bash
-npm install <your npm package name> [list of peer dependencies]
+npm install hardhat-c3-linearization
 ```
 
 Import the plugin in your `hardhat.config.js`:
 
 ```js
-require("<your plugin npm package name>");
+require("hardhat-c3-linearization");
 ```
 
 Or if you are using TypeScript, in your `hardhat.config.ts`:
 
 ```ts
-import "<your plugin npm package name>";
+import "hardhat-c3-linearization";
 ```
-
-## Required plugins
-
-<_The list of all the required Hardhat plugins if there are any_>
-
-- [@nomiclabs/hardhat-web3](https://github.com/nomiclabs/hardhat/tree/master/packages/hardhat-web3)
 
 ## Tasks
 
-<_A description of each task added by this plugin. If it just overrides internal tasks, this may not be needed_>
-
-This plugin creates no additional tasks.
-
-<_or_>
-
-This plugin adds the _example_ task to Hardhat:
-
-```
-output of `npx hardhat help example`
-```
-
-## Environment extensions
-
-<_A description of each extension to the Hardhat Runtime Environment_>
-
-This plugin extends the Hardhat Runtime Environment by adding an `example` field whose type is `ExampleHardhatRuntimeEnvironmentField`.
-
-## Configuration
-
-<_A description of each extension to the HardhatConfig or to its fields_>
-
-This plugin extends the `HardhatUserConfig`'s `ProjectPathsUserConfig` object with an optional `newPath` field.
-
-This is an example of how to set it:
-
-```js
-module.exports = {
-  paths: {
-    newPath: "new-path",
-  },
-};
-```
+When running the compilation task the linearization output will be in a `linearization/linearization.json` file on your project.
 
 ## Usage
 
-<_A description of how to use this plugin. How to use the tasks if there are any, etc._>
+The plugin will be automatically executed when the project is compiled.
 
-There are no additional steps you need to take for this plugin to work.
+If there is any linearization problem during the compilation, even though the compilation will fail the linearization file will be generated showing the problem.
 
-Install it and access ethers through the Hardhat Runtime Environment anywhere you need it (tasks, scripts, tests, etc). -->
+For example in the following scenario,
+
+```solidity
+ contract A{}
+ contract B is A{}
+ contract C is B, A{}
+```
+
+the linearization output will be:
+
+```json
+{
+  "A": ["A"],
+  "B": ["B", "A"],
+  "C": [
+    "C",
+    "Linearization of inheritance graph impossible",
+    ["A"],
+    ["B", "A"],
+    ["A", "B"]
+  ]
+}
+```
+
+showing the linearization issue in contract C and the problem source when merging the linearization of contract B with the contract C inheritance order.
