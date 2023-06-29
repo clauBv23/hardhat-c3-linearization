@@ -1,6 +1,9 @@
 # hardhat-c3-linearization
 
-![NPM](https://img.shields.io/npm/l/hardhat-c3-linearization)
+[![npm](https://img.shields.io/npm/v/hardhat-c3-linearization)](https://www.npmjs.com/package/hardhat-c3-linearization)
+[![npm type definitions](https://img.shields.io/npm/types/hardhat-c3-linearization)](https://www.npmjs.com/package/hardhat-c3-linearization)
+[![NPM](https://img.shields.io/npm/l/hardhat-c3-linearization)](https://www.npmjs.com/package/hardhat-c3-linearization)
+
 
 Plugin to get the C3 linearization output from your project.
 
