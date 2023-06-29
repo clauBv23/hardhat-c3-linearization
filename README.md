@@ -6,7 +6,7 @@ Plugin to get the C3 linearization output from your project.
 
 ## What
 
-This plugin will help you better simplify your project's inheritance graph and to solve the linearization issues in an easer way.
+This plugin will help you better simplify your project's inheritance graph and to solve the linearization issues in an easier way.
 
 ## Installation
 
@@ -28,13 +28,13 @@ import "hardhat-c3-linearization";
 
 ## Tasks
 
-When running the compilation task the linearization output will be in a `linearization/linearization.json` file on your project.
+When running the compilation task, the linearization output will be in your project's `linearization/linearization.json` file.
 
 ## Usage
 
 The plugin will be automatically executed when the project is compiled.
 
-If there is any linearization problem during the compilation, even though the compilation will fail the linearization file will be generated showing the problem.
+If there is any linearization problem during the compilation, even though the compilation will fail the linearization file will be generated showing the issue.
 
 For example in the following scenario,
 
