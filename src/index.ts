@@ -12,38 +12,50 @@ import {
   getSolidityFilesCachePath,
   SolidityFilesCache,
 } from "hardhat/builtin-tasks/utils/solidity-files-cache";
-import { task } from "hardhat/config";
+import { extendConfig, task } from "hardhat/config";
 import type { CompilerInput } from "hardhat/types";
 import * as taskTypes from "hardhat/types/builtin-tasks";
 
 import { linearize } from "./linearize";
+// This import is needed to let the TypeScript compiler know that it should include your type
+// extensions in your npm package's types file.
+import "./type-extensions";
 import type {
   CompileJobArgs,
   ContractData,
   ContractInheritances,
 } from "./types";
 
+extendConfig((config, userConfig) => {
+  config.linearization = {
+    enabled: userConfig?.linearization?.enabled ? true : false,
+  };
+});
+
 task<CompileJobArgs>(
   TASK_COMPILE_SOLIDITY_COMPILE_JOB,
   async (args, hre, superCall) => {
     const { compilationJob } = args;
+    // run when compilation if it if enabled
+    if (hre.config.linearization.enabled) {
+      const input: CompilerInput = await hre.run(
+        TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
+        { compilationJob }
+      );
 
-    const input: CompilerInput = await hre.run(
-      TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
-      { compilationJob }
-    );
+      const ctrInheritances: ContractInheritances = {};
+      for (const file of Object.entries(input.sources)) {
+        const contracts: ContractData[] = parsing(file[1].content);
 
-    const ctrInheritances: ContractInheritances = {};
-    for (const file of Object.entries(input.sources)) {
-      const contracts: ContractData[] = parsing(file[1].content);
-
-      for (const c of contracts) {
-        ctrInheritances[c.name] = c.inheritances;
+        for (const c of contracts) {
+          ctrInheritances[c.name] = c.inheritances;
+        }
       }
+
+      const result = linearize(ctrInheritances);
+      await writeInFile(result);
     }
 
-    const result = linearize(ctrInheritances);
-    await writeInFile(result);
     return superCall({ ...args, compilationJob });
   }
 );
