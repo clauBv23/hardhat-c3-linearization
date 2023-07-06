@@ -7,10 +7,19 @@ import { useEnvironment } from "./helpers";
 
 describe("Integration tests examples", function () {
   describe("Hardhat Runtime Environment extension", function () {
+    // todo add checks
     useEnvironment("hardhat-project");
 
     it("compile", async function () {
       await this.hre.run(TASK_COMPILE, { force: true, quiet: true });
+    });
+
+    it("linearize", async function () {
+      await this.hre.run("linearize");
+    });
+
+    it("linearize specific path", async function () {
+      await this.hre.run("linearize", { path: "./contracts/L.sol" });
     });
   });
 });
