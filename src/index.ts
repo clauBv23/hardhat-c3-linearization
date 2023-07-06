@@ -1,28 +1,27 @@
-import fsExtra from "fs-extra";
 import * as parser from "@solidity-parser/parser";
 import { ContractDefinition } from "@solidity-parser/parser/dist/src/ast-types";
-
-import { task } from "hardhat/config";
-import * as taskTypes from "hardhat/types/builtin-tasks";
+import fsExtra from "fs-extra";
 import {
   TASK_COMPILE_SOLIDITY_COMPILE_JOB,
   TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
-  TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS,
-  TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
   TASK_COMPILE_SOLIDITY_GET_DEPENDENCY_GRAPH,
+  TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
+  TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS,
 } from "hardhat/builtin-tasks/task-names";
-import type { CompilerInput } from "hardhat/types";
 import {
   getSolidityFilesCachePath,
   SolidityFilesCache,
 } from "hardhat/builtin-tasks/utils/solidity-files-cache";
+import { task } from "hardhat/config";
+import type { CompilerInput } from "hardhat/types";
+import * as taskTypes from "hardhat/types/builtin-tasks";
 
+import { linearize } from "./linearize";
 import type {
   CompileJobArgs,
   ContractData,
   ContractInheritances,
 } from "./types";
-import { linearize } from "./linearize";
 
 task<CompileJobArgs>(
   TASK_COMPILE_SOLIDITY_COMPILE_JOB,
@@ -44,7 +43,7 @@ task<CompileJobArgs>(
     }
 
     const result = linearize(ctrInheritances);
-    writeInFile(result);
+    await writeInFile(result);
     return superCall({ ...args, compilationJob });
   }
 );
@@ -75,7 +74,7 @@ task("linearize")
       );
 
       const solidityFilesCachePath = getSolidityFilesCachePath(config.paths);
-      let solidityFilesCache = await SolidityFilesCache.readFromFile(
+      const solidityFilesCache = await SolidityFilesCache.readFromFile(
         solidityFilesCachePath
       );
 
