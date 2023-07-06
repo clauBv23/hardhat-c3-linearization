@@ -28,11 +28,11 @@ import "hardhat-c3-linearization";
 
 ## Tasks
 
-This plugin adds a linearize task to get the c3 linearization output from a project.
+The plugin adds a linearize task to get the c3 linearization output from a project.
 
 To do so just run
 
-````
+```
 npx hardhat linearize
 ```
 and the linearization output of your entire project will be in your project's `linearization/linearization.json` file.
@@ -58,13 +58,13 @@ module.exports = {
     enabled: true,
   },
 };
-````
+```
 
 ## Usage
 
-The plugin will be automatically executed when the project is compiled.
+The plugin will be automatically executed when the project is compiled (if it is enabled).
 
-If there is any linearization problem during the compilation, even though the compilation will fail the linearization file will be generated showing the issue.
+And if there is any linearization problem during the compilation, even though the compilation will fail, the linearization file will be generated showing the issue.
 
 For example in the following scenario,
 
@@ -91,3 +91,5 @@ the linearization output will be:
 ```
 
 showing the linearization issue in contract C and the problem source when merging the linearization of contract B with the contract C inheritance order.
+ 
+ In any case, the same linearization output will be generated if the `npx hardhat linearize` task is executed.
