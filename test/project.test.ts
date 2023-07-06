@@ -10,7 +10,13 @@ describe("Integration tests examples", function () {
     // todo add checks
     useEnvironment("hardhat-project");
 
-    it("compile", async function () {
+    it("compile with linearize enabled", async function () {
+      this.hre.config.linearization.enabled = true;
+      await this.hre.run(TASK_COMPILE, { force: true, quiet: true });
+    });
+
+    it("compile with linearize disabled", async function () {
+      this.hre.config.linearization.enabled = false;
       await this.hre.run(TASK_COMPILE, { force: true, quiet: true });
     });
 
