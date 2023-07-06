@@ -4,9 +4,17 @@ import fsExtra from "fs-extra";
 import {
   TASK_COMPILE_SOLIDITY_COMPILE_JOB,
   TASK_COMPILE_SOLIDITY_GET_COMPILER_INPUT,
+  TASK_COMPILE_SOLIDITY_GET_DEPENDENCY_GRAPH,
+  TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
+  TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS,
 } from "hardhat/builtin-tasks/task-names";
+import {
+  getSolidityFilesCachePath,
+  SolidityFilesCache,
+} from "hardhat/builtin-tasks/utils/solidity-files-cache";
 import { task } from "hardhat/config";
 import type { CompilerInput } from "hardhat/types";
+import * as taskTypes from "hardhat/types/builtin-tasks";
 
 import { linearize } from "./linearize";
 import type {
@@ -14,9 +22,6 @@ import type {
   ContractData,
   ContractInheritances,
 } from "./types";
-
-// This import is needed to let the TypeScript compiler know that it should include your type
-// extensions in your npm package's types file.
 
 task<CompileJobArgs>(
   TASK_COMPILE_SOLIDITY_COMPILE_JOB,
@@ -38,11 +43,59 @@ task<CompileJobArgs>(
     }
 
     const result = linearize(ctrInheritances);
-    writeInFile(result);
-
+    await writeInFile(result);
     return superCall({ ...args, compilationJob });
   }
 );
+
+task("linearize")
+  .addOptionalVariadicPositionalParam(
+    "filesPath",
+    "An optional list of files to linearize",
+    []
+  )
+  .setAction(
+    async (
+      { filesPath }: { filesPath: string[] },
+      { artifacts, config, run }
+    ) => {
+      let sourcePaths: string[];
+      if (filesPath.length === 0) {
+        sourcePaths = await run(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS);
+      } else {
+        sourcePaths = filesPath;
+      }
+
+      const sourceNames: string[] = await run(
+        TASK_COMPILE_SOLIDITY_GET_SOURCE_NAMES,
+        {
+          sourcePaths,
+        }
+      );
+
+      const solidityFilesCachePath = getSolidityFilesCachePath(config.paths);
+      const solidityFilesCache = await SolidityFilesCache.readFromFile(
+        solidityFilesCachePath
+      );
+
+      const dependencyGraph: taskTypes.DependencyGraph = await run(
+        TASK_COMPILE_SOLIDITY_GET_DEPENDENCY_GRAPH,
+        { sourceNames, solidityFilesCache }
+      );
+
+      const ctrInheritances: ContractInheritances = {};
+      for (const file of Object.entries(dependencyGraph.getResolvedFiles())) {
+        const contracts: ContractData[] = parsing(file[1].content.rawContent);
+
+        for (const c of contracts) {
+          ctrInheritances[c.name] = c.inheritances;
+        }
+      }
+
+      const result = linearize(ctrInheritances);
+      await writeInFile(result);
+    }
+  );
 
 function parsing(contract: string): ContractData[] {
   const ast = parser.parse(contract);
@@ -69,15 +122,14 @@ function parsing(contract: string): ContractData[] {
   return contracts;
 }
 
-function writeInFile(linearization: ContractInheritances) {
+async function writeInFile(linearization: ContractInheritances) {
   const fileContent: string = JSON.stringify(linearization, null, 2);
 
   // todo make file path configurable
-  fsExtra.outputFile("linearization/linearization.json", fileContent, (err) => {
-    if (err) {
-      throw new Error(`Error writing on file: ${err}`);
-    } else {
-      console.log("Linearization written successfully\n");
-    }
-  });
+  try {
+    await fsExtra.outputFile("linearization/linearization.json", fileContent);
+    console.log("Linearization written successfully\n");
+  } catch (err) {
+    throw new Error(`Error writing on file: ${err}`);
+  }
 }
