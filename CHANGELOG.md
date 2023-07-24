@@ -1,5 +1,11 @@
 # Changelog
 
+# 1.2.1
+
+- Added new task to clean the linearization file `clean-linearize`.
+- Updated to show the current merge state when there is an issue in the linearization process.
+- Added tests to cover flows.
+
 # 1.2.0
 
 - Added configuration to disable linearization running when compiling.
