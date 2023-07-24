@@ -16,6 +16,11 @@ import { extendConfig, task } from "hardhat/config";
 import type { CompilerInput } from "hardhat/types";
 import * as taskTypes from "hardhat/types/builtin-tasks";
 
+import {
+  defaultFileLocation,
+  deletedSuccessfullyMsg,
+  writtenSuccessfullyMsg,
+} from "./constants";
 import { linearize } from "./linearize";
 // This import is needed to let the TypeScript compiler know that it should include your type
 // extensions in your npm package's types file.
@@ -25,12 +30,6 @@ import type {
   ContractData,
   ContractInheritances,
 } from "./types";
-
-import {
-  defaultFileLocation,
-  writtenSuccessfullyMsg,
-  deletedSuccessfullyMsg,
-} from "./constants";
 
 extendConfig((config, userConfig) => {
   config.linearization = {

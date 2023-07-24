@@ -1,18 +1,16 @@
-// tslint:disable-next-line no-implicit-dependencies
-import { assert, expect } from "chai";
 import chai from "chai";
+import chaiAsPromised from "chai-as-promised";
 import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
 import sinon from "sinon";
-import chaiAsPromised from "chai-as-promised";
-
-chai.use(chaiAsPromised);
-
-import { useEnvironment, readLinearizationFile } from "./helpers";
 
 import {
-  writtenSuccessfullyMsg,
   deletedSuccessfullyMsg,
+  writtenSuccessfullyMsg,
 } from "../src/constants";
+
+import { readLinearizationFile, useEnvironment } from "./helpers";
+
+chai.use(chaiAsPromised);
 
 describe("Integration tests examples", function () {
   let logStub: any;
@@ -37,12 +35,12 @@ describe("Integration tests examples", function () {
 
       logStub.restore();
 
-      var data = await readLinearizationFile();
+      const data = await readLinearizationFile();
 
-      assert.equal(data, null);
-      expect(logStub.calledTwice).to.be.true;
-      expect(logStub.args[0][0]).to.be.equal(writtenSuccessfullyMsg);
-      expect(logStub.args[1][0]).to.be.equal(deletedSuccessfullyMsg);
+      chai.assert.equal(data, null);
+      chai.assert.isTrue(logStub.calledTwice);
+      chai.assert.equal(logStub.args[0][0], writtenSuccessfullyMsg);
+      chai.assert.equal(logStub.args[1][0], deletedSuccessfullyMsg);
     });
 
     describe("linearize task", function () {
@@ -54,41 +52,43 @@ describe("Integration tests examples", function () {
 
       it("linearize", async function () {
         await this.hre.run("linearize");
-        var data = await readLinearizationFile();
+        const data = await readLinearizationFile();
 
-        assert.isNotNull(data);
-        assert.deepEqual(JSON.parse(data!), {
+        chai.assert.isNotNull(data);
+        chai.assert.deepEqual(JSON.parse(data!), {
           A: ["A"],
           K: ["K"],
           B: ["B", "A"],
           C: ["C", "B", "K", "A"],
         });
 
-        expect(logStub.called).to.be.true;
+        chai.assert.isTrue(logStub.called);
       });
 
       it("linearize specific path (existent path)", async function () {
         await this.hre.run("linearize", { filesPath: ["./contracts/A.sol"] });
 
-        var data = await readLinearizationFile();
+        const data = await readLinearizationFile();
 
-        assert.isNotNull(data);
-        assert.deepEqual(JSON.parse(data!), {
+        chai.assert.isNotNull(data);
+        chai.assert.deepEqual(JSON.parse(data!), {
           A: ["A"],
           K: ["K"],
         });
 
-        expect(logStub.calledTwice).to.be.true;
-        expect(logStub.args[0][0]).to.be.equal(deletedSuccessfullyMsg);
-        expect(logStub.args[1][0]).to.be.equal(writtenSuccessfullyMsg);
+        chai.assert.isTrue(logStub.calledTwice);
+        chai.assert.equal(logStub.args[0][0], deletedSuccessfullyMsg);
+        chai.assert.equal(logStub.args[1][0], writtenSuccessfullyMsg);
       });
 
       it("linearize specific path (non existent path)", async function () {
-        await expect(
-          this.hre.run("linearize", {
-            filesPath: ["./contracts/L.sol"],
-          })
-        ).to.be.rejectedWith("HH1005");
+        await chai
+          .expect(
+            this.hre.run("linearize", {
+              filesPath: ["./contracts/L.sol"],
+            })
+          )
+          .to.be.rejectedWith("HH1005");
       });
 
       it("linearize with lienarization issue", async function () {
@@ -99,10 +99,10 @@ describe("Integration tests examples", function () {
             "./newContracts/C.sol",
           ],
         });
-        var data = await readLinearizationFile();
+        const data = await readLinearizationFile();
 
-        assert.isNotNull(data);
-        assert.deepEqual(JSON.parse(data!), {
+        chai.assert.isNotNull(data);
+        chai.assert.deepEqual(JSON.parse(data!), {
           A: ["A", "K"],
           K: ["K"],
           B: ["B", "A", "K"],
@@ -117,7 +117,7 @@ describe("Integration tests examples", function () {
           ],
         });
 
-        expect(logStub.called).to.be.true;
+        chai.assert.isTrue(logStub.called);
       });
     });
 
@@ -139,26 +139,26 @@ describe("Integration tests examples", function () {
         this.hre.config.linearization.enabled = true;
         await this.hre.run(TASK_COMPILE, { force: true, quiet: true });
 
-        var data = await readLinearizationFile();
+        const data = await readLinearizationFile();
 
-        assert.isNotNull(data);
+        chai.assert.isNotNull(data);
 
-        assert.deepEqual(JSON.parse(data!), {
+        chai.assert.deepEqual(JSON.parse(data!), {
           A: ["A"],
           K: ["K"],
           B: ["B", "A"],
           C: ["C", "B", "K", "A"],
         });
 
-        expect(logStub.called).to.be.true;
+        chai.assert.isTrue(logStub.called);
       });
 
       it("compile with linearize disabled", async function () {
         this.hre.config.linearization.enabled = false;
         await this.hre.run(TASK_COMPILE, { force: true, quiet: true });
 
-        var data = await readLinearizationFile();
-        assert.equal(data, null);
+        const data = await readLinearizationFile();
+        chai.assert.equal(data, null);
       });
     });
   });
