@@ -1,6 +1,9 @@
+import fsExtra from "fs-extra";
 import { resetHardhatContext } from "hardhat/plugins-testing";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import path from "path";
+
+import { defaultFileLocation } from "../src/constants";
 
 declare module "mocha" {
   interface Context {
@@ -18,4 +21,13 @@ export function useEnvironment(fixtureProjectName: string) {
   afterEach("Resetting hardhat", function () {
     resetHardhatContext();
   });
+}
+
+export async function readLinearizationFile(): Promise<string | null> {
+  const fileExists = await fsExtra.pathExists(defaultFileLocation);
+  if (fileExists) {
+    return fsExtra.readFile(defaultFileLocation, "utf8");
+  } else {
+    return null;
+  }
 }

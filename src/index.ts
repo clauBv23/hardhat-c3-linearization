@@ -16,6 +16,11 @@ import { extendConfig, task } from "hardhat/config";
 import type { CompilerInput } from "hardhat/types";
 import * as taskTypes from "hardhat/types/builtin-tasks";
 
+import {
+  defaultFileLocation,
+  deletedSuccessfullyMsg,
+  writtenSuccessfullyMsg,
+} from "./constants";
 import { linearize } from "./linearize";
 // This import is needed to let the TypeScript compiler know that it should include your type
 // extensions in your npm package's types file.
@@ -109,6 +114,16 @@ task("linearize")
     }
   );
 
+task("clean-linearize")
+  .addOptionalVariadicPositionalParam(
+    "filesPath",
+    "An optional list of files to linearize",
+    []
+  )
+  .setAction(async () => {
+    await deleteFileIfExists();
+  });
+
 function parsing(contract: string): ContractData[] {
   const ast = parser.parse(contract);
   let contractDefinitions: ContractDefinition[] = [];
@@ -139,9 +154,23 @@ async function writeInFile(linearization: ContractInheritances) {
 
   // todo make file path configurable
   try {
-    await fsExtra.outputFile("linearization/linearization.json", fileContent);
-    console.log("Linearization written successfully\n");
+    await fsExtra.outputFile(defaultFileLocation, fileContent);
+    console.log(writtenSuccessfullyMsg);
   } catch (err) {
     throw new Error(`Error writing on file: ${err}`);
+  }
+}
+
+async function deleteFileIfExists() {
+  try {
+    // const resolvedPath = path.resolve(filePath);
+    const fileExists = await fsExtra.pathExists(defaultFileLocation);
+
+    if (fileExists) {
+      await fsExtra.unlink(defaultFileLocation);
+      console.log(deletedSuccessfullyMsg);
+    }
+  } catch (err) {
+    throw new Error(`Error deleting the file: ${err}`);
   }
 }
