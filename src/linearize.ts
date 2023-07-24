@@ -50,7 +50,11 @@ function _merge(sequences: string[][]): any[] {
     sequences = sequences.filter((s) => s.length > 0);
 
     if (!found) {
-      return ["Linearization of inheritance graph impossible", ...sequences];
+      return [
+        ...mergeResult,
+        "Linearization of inheritance graph impossible",
+        ...sequences,
+      ];
     }
   }
 
