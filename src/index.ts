@@ -26,6 +26,12 @@ import type {
   ContractInheritances,
 } from "./types";
 
+import {
+  defaultFileLocation,
+  writtenSuccessfullyMsg,
+  deletedSuccessfullyMsg,
+} from "./constants";
+
 extendConfig((config, userConfig) => {
   config.linearization = {
     enabled: userConfig?.linearization?.enabled ? true : false,
@@ -109,6 +115,16 @@ task("linearize")
     }
   );
 
+task("clean-linearize")
+  .addOptionalVariadicPositionalParam(
+    "filesPath",
+    "An optional list of files to linearize",
+    []
+  )
+  .setAction(async () => {
+    await deleteFileIfExists();
+  });
+
 function parsing(contract: string): ContractData[] {
   const ast = parser.parse(contract);
   let contractDefinitions: ContractDefinition[] = [];
@@ -139,9 +155,23 @@ async function writeInFile(linearization: ContractInheritances) {
 
   // todo make file path configurable
   try {
-    await fsExtra.outputFile("linearization/linearization.json", fileContent);
-    console.log("Linearization written successfully\n");
+    await fsExtra.outputFile(defaultFileLocation, fileContent);
+    console.log(writtenSuccessfullyMsg);
   } catch (err) {
     throw new Error(`Error writing on file: ${err}`);
+  }
+}
+
+async function deleteFileIfExists() {
+  try {
+    // const resolvedPath = path.resolve(filePath);
+    const fileExists = await fsExtra.pathExists(defaultFileLocation);
+
+    if (fileExists) {
+      await fsExtra.unlink(defaultFileLocation);
+      console.log(deletedSuccessfullyMsg);
+    }
+  } catch (err) {
+    throw new Error(`Error deleting the file: ${err}`);
   }
 }
