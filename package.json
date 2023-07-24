@@ -4,6 +4,30 @@
   "description": "Hardhat TypeScript plugin to get the C3 linearization of your project.",
   "author": "Claudia Barcelo <claudiabarcelovaldes40@gmail.com>",
   "repository": "github:clauBv23/hardhat-c3-linearization",
+  "license": "MIT",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "keywords": [
+    "ethereum",
+    "smart-contracts",
+    "hardhat",
+    "hardhat-plugin",
+    "c3-linearization"
+  ],
+  "scripts": {
+    "lint:fix": "prettier --write 'src/**/*.{js,ts}' 'test/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
+    "lint": "tslint --config tslint.json --project tsconfig.json",
+    "test": "mocha --exit --recursive 'test/**/*.test.ts'",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist/src/",
+    "src/",
+    "LICENSE",
+    "README.md"
+  ],
   "devDependencies": {
     "@solidity-parser/parser": "^0.16.0",
     "@types/chai": "^4.3.0",
