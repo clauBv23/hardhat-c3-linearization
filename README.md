@@ -35,6 +35,7 @@ To do so just run
 ```
 npx hardhat linearize
 ```
+
 and the linearization output of your entire project will be in your project's `linearization/linearization.json` file.
 
 You can add a specific path to get the linearization output of those specified files,
@@ -45,18 +46,23 @@ npx hardhat linearize ./contracts/MyContract.sol
 
 The linearization output can also be generated when compiling, it will work over the entire project and is disabled by default.
 
+```
+npx hardhat clean-linearize
+```
+
+Task to clean the current linearization output file.
+
 ## Configuration
 
 To configure the linearization to run while compiling, this plugin extends the `HardhatUserConfig`'s `ProjectPathsUserConfig` object with an optional `linearization` field to enable it.
-
 
 This can be set as follows:
 
 ```js
 module.exports = {
-  linearization: {
-    enabled: true,
-  },
+  linearization: {
+    enabled: true,
+  },
 };
 ```
 
@@ -91,5 +97,5 @@ the linearization output will be:
 ```
 
 showing the linearization issue in contract C and the problem source when merging the linearization of contract B with the contract C inheritance order.
- 
- In any case, the same linearization output will be generated if the `npx hardhat linearize` task is executed.
+
+In any case, the same linearization output will be generated if the `npx hardhat linearize` task is executed.
