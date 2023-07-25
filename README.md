@@ -46,11 +46,11 @@ npx hardhat linearize ./contracts/MyContract.sol
 
 The linearization output can also be generated when compiling, it will work over the entire project and is disabled by default.
 
+The task is to clean the current linearization output file.
+
 ```
 npx hardhat clean-linearize
 ```
-
-Task to clean the current linearization output file.
 
 ## Configuration
 
