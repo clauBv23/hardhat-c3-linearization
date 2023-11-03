@@ -1,6 +1,6 @@
 {
   "name": "hardhat-c3-linearization",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Hardhat TypeScript plugin to get the C3 linearization of your project.",
   "author": "Claudia Barcelo <claudiabarcelovaldes40@gmail.com>",
   "repository": "github:clauBv23/hardhat-c3-linearization",
