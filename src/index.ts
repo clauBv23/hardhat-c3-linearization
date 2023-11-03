@@ -133,7 +133,7 @@ function parsing(contract: string): ContractData[] {
   ) as ContractDefinition[];
 
   if (contractDefinitions.length === 0) {
-    return [{ name: "", inheritances: [""] }];
+    return [];
   }
 
   const contracts: ContractData[] = [];
