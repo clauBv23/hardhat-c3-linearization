@@ -2,7 +2,7 @@
 
 # 1.2.2
 
-- Fixed linearization generation when there is a file without contract declaration
+- Fixed linearization generation when there is a file without contract declaration.
 
 # 1.2.1
 
